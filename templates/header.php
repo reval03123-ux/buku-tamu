@@ -171,3 +171,5 @@
 
                 </nav>
                 <!-- End of Topbar -->
+                  <!-- Custom styles for this page -->
+    <link href="assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
