@@ -39,6 +39,28 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
                     </button>
                   </div>';
         }
+    } else if (isset($_POST['ganti_password'])) {
+        // Menggunakan >= 0 agar tetap dianggap sukses meski password baru sama dengan password lama
+        if (ganti_password($_POST) >= 0) {
+            echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Password berhasil diubah!
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>';
+            echo "<script>
+                    setTimeout(function() {
+                        window.location.href = 'user.php';
+                    }, 1500);
+                  </script>";
+        } else {
+            echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    Gagal mengubah password!
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>';
+        }
     }
     ?>
 
@@ -73,6 +95,9 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
                                 <td><?= htmlspecialchars($user['username']); ?></td>
                                 <td><?= htmlspecialchars($user['user_role']); ?></td>
                                 <td>
+                                    <button type="button" class="btn btn-info btn-icon-split" data-toggle="modal" data-target="#gantiPassword" data-id="<?= $user['id_user'] ?>">
+                                        <span class="text">Ganti Password</span>
+                                    </button>
                                     <a class="btn btn-success btn-sm" href="edit-user.php?id=<?= $user['id_user']; ?>">Ubah</a>
                                     <a onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')" class="btn btn-danger btn-sm" href="hapus-user.php?id=<?= $user['id_user']; ?>">Hapus</a>
                                 </td>
@@ -134,6 +159,37 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
             </form>
             <!-- FORM SELESAI DI SINI -->
 
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ganti Password -->
+<div class="modal fade" id="gantiPassword" tabindex="-1" aria-labelledby="gantiPasswordLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="gantiPasswordLabel">Ganti Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="">
+                <div class="modal-body">
+
+                    <input type="hidden" name="id_user" id="id_user">
+                    <div class="form-group row">
+                        <label for="password" class="col-sm-4 col-form-label">Password Baru</label>
+                        <div class="col-sm-7">
+                            <input type="password" class="form-control" id="password" name="password">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Keluar</button>
+                    <button type="submit" name="ganti_password" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
