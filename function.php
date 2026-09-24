@@ -14,7 +14,9 @@ function query($query)
     return $rows;
 }
 
-// function tambah data
+// ==================== FUNCTION DATA TAMU ====================
+
+// function tambah data tamu
 function tambah_tamu($data)
 {
     global $koneksi;
@@ -59,12 +61,65 @@ function ubah_tamu($data)
     return mysqli_affected_rows($koneksi);
 }
 
-// function hapus data tamu (SEKARANG SUDAH BERDIRI SENDIRI)
+// function hapus data tamu
 function hapus_tamu($id)
 {
     global $koneksi;
 
     $query = "DELETE FROM buku_tamu WHERE id_tamu = '$id'";
+
+    mysqli_query($koneksi, $query);
+
+    return mysqli_affected_rows($koneksi);
+}
+
+// ==================== FUNCTION DATA USER ====================
+
+// Function Tambah User
+function tambah_user($data)
+{
+    global $koneksi;
+
+    $id_user   = htmlspecialchars($data['id_user']);
+    $username  = htmlspecialchars($data['username']);
+    $password  = htmlspecialchars($data['password']);
+    $user_role = htmlspecialchars($data['user_role']);
+
+    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+    $query = "INSERT INTO users (id_user, username, password, user_role) 
+              VALUES ('$id_user', '$username', '$password_hash', '$user_role')";
+
+    mysqli_query($koneksi, $query);
+
+    return mysqli_affected_rows($koneksi);
+}
+
+// Function Ubah User (Sudah diperbaiki: variabel $id_user)
+function ubah_user($data)
+{
+    global $koneksi;
+
+    $id_user   = htmlspecialchars($data['id_user']);
+    $username  = htmlspecialchars($data['username']);
+    $user_role = htmlspecialchars($data['user_role']);
+
+    $query = "UPDATE users SET 
+                username = '$username',
+                user_role = '$user_role'
+              WHERE id_user = '$id_user'";
+
+    mysqli_query($koneksi, $query);
+
+    return mysqli_affected_rows($koneksi);
+}
+
+// Function Hapus User
+function hapus_user($id)
+{
+    global $koneksi;
+
+    $query = "DELETE FROM users WHERE id_user = '$id'";
 
     mysqli_query($koneksi, $query);
 
