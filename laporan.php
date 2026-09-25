@@ -2,15 +2,22 @@
 require_once 'function.php';
 include 'templates/header.php';
 
-// Logika filter tanggal
+// Logika filter tanggal dan pembuatan link export
 if (isset($_POST['tampilkan'])) {
     $p_awal = $_POST['p_awal'];
     $p_akhir = $_POST['p_akhir'];
+
     // Ambil data berdasarkan periode yang dipilih
     $buku_tamu = query("SELECT * FROM buku_tamu WHERE tanggal BETWEEN '$p_awal' AND '$p_akhir' ORDER BY tanggal DESC");
+
+    // Link export dengan parameter tanggal
+    $link = "export-laporan.php?p_awal=$p_awal&p_akhir=$p_akhir";
 } else {
     // Tampilkan semua data jika tombol filter belum diklik
     $buku_tamu = query("SELECT * FROM buku_tamu ORDER BY tanggal DESC");
+
+    // Link export default (tanpa filter)
+    $link = "export-laporan.php";
 }
 ?>
 
@@ -55,14 +62,20 @@ if (isset($_POST['tampilkan'])) {
         </div>
     </div>
 
-    <!-- Tabel Histori Tamu -->
+    <!-- Tombol Export Laporan -->
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Tabel Histori Tamu</h6>
+            <a href="<?= isset($_POST['tampilkan']) ? $link : 'export-laporan.php'; ?>" target="_blank" class="btn btn-success btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-file-excel"></i>
+                </span>
+                <span class="text">Export Laporan</span>
+            </a>
             <?php if (isset($_POST['tampilkan'])) : ?>
                 <a href="laporan.php" class="btn btn-secondary btn-sm">Reset Filter</a>
             <?php endif; ?>
         </div>
+
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">

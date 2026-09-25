@@ -1,0 +1,11 @@
+{
+    "name": "reval/buku_tamu",
+    "autoload": {
+        "psr-4": {
+            "Reval\\BukuTamu\\": "src/"
+        }
+    },
+    "require": {
+        "phpoffice/phpspreadsheet": "^5.10"
+    }
+}
