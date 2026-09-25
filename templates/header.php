@@ -52,7 +52,7 @@ if (!isset($_SESSION['login'])) {
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-            <!-- Nav Item - Dashboard -->
+            <!-- Nav Item - Dashboard (Bisa diakses siapapun yang login) -->
             <li class="nav-item">
                 <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
@@ -60,13 +60,17 @@ if (!isset($_SESSION['login'])) {
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="buku-tamu.php">
-                    <i class="fas fa-fw fa-book-open"></i>
-                    <span>Buku Tamu</span>
-                </a>
-            </li>
+            <!-- Menu Buku Tamu - Hanya tampil untuk Operator -->
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'operator') : ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="buku-tamu.php">
+                        <i class="fas fa-fw fa-book-open"></i>
+                        <span>Buku Tamu</span>
+                    </a>
+                </li>
+            <?php endif; ?>
 
+            <!-- Nav Item - Laporan -->
             <li class="nav-item">
                 <a class="nav-link" href="laporan.php">
                     <i class="fas fa-fw fa-file-alt"></i>
@@ -74,16 +78,19 @@ if (!isset($_SESSION['login'])) {
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="user.php">
-                    <i class="fas fa-fw fa-users"></i>
-                    <span>User</span>
-                </a>
-            </li>
+            <!-- Menu User - Hanya tampil untuk Admin -->
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') : ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="user.php">
+                        <i class="fas fa-fw fa-users"></i>
+                        <span>User</span>
+                    </a>
+                </li>
+            <?php endif; ?>
 
             <!-- Divider -->
-            <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
+
             <?php
             // cek apabila ada user login maka tampilkan logout
             if (isset($_SESSION['login'])) :
@@ -94,6 +101,7 @@ if (!isset($_SESSION['login'])) {
                         <span>Logout</span></a>
                 </li>
             <?php endif; ?>
+
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>

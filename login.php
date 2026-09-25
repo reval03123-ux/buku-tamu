@@ -19,11 +19,17 @@ if (isset($_POST['login'])) {
 
     if (mysqli_num_rows($result) === 1) {
         $row = mysqli_fetch_assoc($result);
-        if (password_verify($password, $row['password']) || $password === $row['password']) {
+        
+        // PERBAIKAN DI SINI: Kurung tutup dibetulkan dan ditambahkan { }
+        if (password_verify($password, $row['password'])) {
+            // set session
             $_SESSION['login'] = true;
-            $_SESSION['username'] = $row['username'];
-            header("Location: index.php");
-            exit;
+            $_SESSION['username'] = $username;
+            $_SESSION['role'] = $row['user_role']; //
+
+            // login berhasil
+            header("Location: index.php"); //[cite: 2]
+            exit; //[cite: 2]
         }
     }
     $error = true;
