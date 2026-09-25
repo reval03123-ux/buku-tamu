@@ -29,7 +29,15 @@ function tambah_tamu($data)
     $bertemu     = htmlspecialchars($data["bertemu"]);
     $kepentingan = htmlspecialchars($data["kepentingan"]);
 
-    $query = "INSERT INTO buku_tamu VALUES ('$kode','$tanggal','$nama_tamu','$alamat','$no_hp','$bertemu','$kepentingan')";
+    // Upload gambar
+    $gambar = uploadGambar();
+    if (!$gambar) {
+        return false; // Jika gagal mengunggah gambar, hentikan proses
+    }
+
+    // PERBAIKAN: Menambahkan variabel '$gambar' ke dalam VALUES agar pas 8 kolom
+    $query = "INSERT INTO buku_tamu 
+              VALUES ('$kode', '$tanggal', '$nama_tamu', '$alamat', '$no_hp', '$bertemu', '$kepentingan', '$gambar')";
 
     mysqli_query($koneksi, $query);
 
@@ -47,13 +55,22 @@ function ubah_tamu($data)
     $no_hp       = htmlspecialchars($data["no_hp"]);
     $bertemu     = htmlspecialchars($data["bertemu"]);
     $kepentingan = htmlspecialchars($data["kepentingan"]);
+    $gambarLama  = htmlspecialchars($data["gambarLama"]);
+
+    // Cek apakah user memilih gambar baru atau tidak
+    if ($_FILES['gambar']['error'] === 4) {
+        $gambar = $gambarLama;
+    } else {
+        $gambar = uploadGambar();
+    }
 
     $query = "UPDATE buku_tamu SET
                 nama_tamu   = '$nama_tamu',
                 alamat      = '$alamat',
                 no_hp       = '$no_hp',
                 bertemu     = '$bertemu',
-                kepentingan = '$kepentingan'
+                kepentingan = '$kepentingan',
+                gambar      = '$gambar'
               WHERE id_tamu = '$id'";
 
     mysqli_query($koneksi, $query);
@@ -66,11 +83,67 @@ function hapus_tamu($id)
 {
     global $koneksi;
 
+    // Hapus file gambar dari folder jika ada
+    $tamu = query("SELECT * FROM buku_tamu WHERE id_tamu = '$id'")[0];
+    if ($tamu && file_exists('assets/upload_gambar/' . $tamu['gambar'])) {
+        unlink('assets/upload_gambar/' . $tamu['gambar']);
+    }
+
     $query = "DELETE FROM buku_tamu WHERE id_tamu = '$id'";
 
     mysqli_query($koneksi, $query);
 
     return mysqli_affected_rows($koneksi);
+}
+
+// ==================== FUNCTION UPLOAD GAMBAR ====================
+
+function uploadGambar()
+{
+    // ambil data file gambar dari variable $_FILES
+    $namaFile   = $_FILES['gambar']['name'];
+    $ukuranFile = $_FILES['gambar']['size'];
+    $error      = $_FILES['gambar']['error'];
+    $tmpName    = $_FILES['gambar']['tmp_name'];
+
+    // cek apakah tidak ada gambar yang diunggah
+    if ($error === 4) {
+        echo "<script>
+                alert('Pilih gambar terlebih dahulu!');
+              </script>";
+        return false;
+    }
+
+    // cek apakah yang diunggah adalah gambar
+    $ekstensiGambarValid = ['jpg', 'jpeg', 'png'];
+    $ekstensiGambar = explode('.', $namaFile);
+    $ekstensiGambar = strtolower(end($ekstensiGambar));
+    if (!in_array($ekstensiGambar, $ekstensiGambarValid)) {
+        echo "<script>
+                alert('File yang diunggah harus berupa gambar (jpg, jpeg, png)!');
+              </script>";
+        return false;
+    }
+
+    // cek jika ukurannya terlalu besar (maksimal 2MB)
+    if ($ukuranFile > 2000000) {
+        echo "<script>
+                alert('Ukuran gambar terlalu besar!');
+              </script>";
+        return false;
+    }
+
+    // jika lolos pengecekan, buat folder jika belum ada
+    if (!is_dir('assets/upload_gambar/')) {
+        mkdir('assets/upload_gambar/', 0777, true);
+    }
+
+    // generate nama gambar baru dengan uniqid()
+    $namaFileBaru = uniqid() . '.' . $ekstensiGambar;
+
+    move_uploaded_file($tmpName, 'assets/upload_gambar/' . $namaFileBaru);
+
+    return $namaFileBaru;
 }
 
 // ==================== FUNCTION DATA USER ====================
@@ -95,7 +168,7 @@ function tambah_user($data)
     return mysqli_affected_rows($koneksi);
 }
 
-// Function Ubah User (Sudah diperbaiki: variabel $id_user)
+// Function Ubah User
 function ubah_user($data)
 {
     global $koneksi;
@@ -125,6 +198,7 @@ function hapus_user($id)
 
     return mysqli_affected_rows($koneksi);
 }
+
 // function ganti password user
 function ganti_password($data)
 {
@@ -135,8 +209,8 @@ function ganti_password($data)
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
     $query = "UPDATE users SET
-password = '$password_hash'
-WHERE id_user = '$kode'";
+                password = '$password_hash'
+              WHERE id_user = '$kode'";
 
     mysqli_query($koneksi, $query);
 
