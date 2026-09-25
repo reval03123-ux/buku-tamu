@@ -1,5 +1,12 @@
 <?php
 session_start();
+
+// Cek bila user sudah login, langsung redirect ke dashboard (index.php)
+if (isset($_SESSION['login'])) {
+    header("Location: index.php");
+    exit;
+}
+
 require_once 'function.php'; // Sesuaikan jika menggunakan koneksi.php
 
 // Logika proses login
