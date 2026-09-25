@@ -29,22 +29,19 @@ function tambah_tamu($data)
     $bertemu     = htmlspecialchars($data["bertemu"]);
     $kepentingan = htmlspecialchars($data["kepentingan"]);
 
-    // Upload gambar
     $gambar = uploadGambar();
     if (!$gambar) {
         return false; // Jika gagal mengunggah gambar, hentikan proses
     }
 
-    // PERBAIKAN: Menambahkan variabel '$gambar' ke dalam VALUES agar pas 8 kolom
-    $query = "INSERT INTO buku_tamu 
-              VALUES ('$kode', '$tanggal', '$nama_tamu', '$alamat', '$no_hp', '$bertemu', '$kepentingan', '$gambar')";
+    $query = "INSERT INTO buku_tamu VALUES ('$kode','$tanggal','$nama_tamu','$alamat','$no_hp','$bertemu','$kepentingan','$gambar')";
 
     mysqli_query($koneksi, $query);
 
     return mysqli_affected_rows($koneksi);
 }
 
-// function ubah data tamu
+// function ubah data tamu (Sesuai Petunjuk Modul)
 function ubah_tamu($data)
 {
     global $koneksi;
@@ -57,7 +54,7 @@ function ubah_tamu($data)
     $kepentingan = htmlspecialchars($data["kepentingan"]);
     $gambarLama  = htmlspecialchars($data["gambarLama"]);
 
-    // Cek apakah user memilih gambar baru atau tidak
+    // cek apakah user pilih gambar baru atau tidak
     if ($_FILES['gambar']['error'] === 4) {
         $gambar = $gambarLama;
     } else {
@@ -82,12 +79,6 @@ function ubah_tamu($data)
 function hapus_tamu($id)
 {
     global $koneksi;
-
-    // Hapus file gambar dari folder jika ada
-    $tamu = query("SELECT * FROM buku_tamu WHERE id_tamu = '$id'")[0];
-    if ($tamu && file_exists('assets/upload_gambar/' . $tamu['gambar'])) {
-        unlink('assets/upload_gambar/' . $tamu['gambar']);
-    }
 
     $query = "DELETE FROM buku_tamu WHERE id_tamu = '$id'";
 
@@ -120,26 +111,24 @@ function uploadGambar()
     $ekstensiGambar = strtolower(end($ekstensiGambar));
     if (!in_array($ekstensiGambar, $ekstensiGambarValid)) {
         echo "<script>
-                alert('File yang diunggah harus berupa gambar (jpg, jpeg, png)!');
+                alert('File yang diunggah harus gambar!');
               </script>";
         return false;
     }
 
-    // cek jika ukurannya terlalu besar (maksimal 2MB)
-    if ($ukuranFile > 2000000) {
+    // cek jika ukurannya terlalu besar (maksimal 1MB)
+    if ($ukuranFile > 1000000) {
         echo "<script>
                 alert('Ukuran gambar terlalu besar!');
               </script>";
         return false;
     }
 
-    // jika lolos pengecekan, buat folder jika belum ada
-    if (!is_dir('assets/upload_gambar/')) {
-        mkdir('assets/upload_gambar/', 0777, true);
-    }
-
+    // jika lolos pengecekan, gambar akan diunggah
     // generate nama gambar baru dengan uniqid()
-    $namaFileBaru = uniqid() . '.' . $ekstensiGambar;
+    $namaFileBaru = uniqid();
+    $namaFileBaru .= '.';
+    $namaFileBaru .= $ekstensiGambar;
 
     move_uploaded_file($tmpName, 'assets/upload_gambar/' . $namaFileBaru);
 
@@ -155,8 +144,13 @@ function tambah_user($data)
 
     $id_user   = htmlspecialchars($data['id_user']);
     $username  = htmlspecialchars($data['username']);
-    $password  = htmlspecialchars($data['password']);
+    $password  = trim($data['password']);
     $user_role = htmlspecialchars($data['user_role']);
+
+    // Validasi jika ada field yang kosong
+    if (empty($username) || empty($password) || empty($user_role)) {
+        return false;
+    }
 
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
@@ -199,13 +193,39 @@ function hapus_user($id)
     return mysqli_affected_rows($koneksi);
 }
 
-// function ganti password user
+// Function Ganti Password User
 function ganti_password($data)
 {
     global $koneksi;
 
-    $kode = htmlspecialchars($data["id_user"]);
-    $password = htmlspecialchars($data["password"]);
+    $kode     = htmlspecialchars($data["id_user"]);
+    $password = trim($data["password"]);
+
+    // 1. Validasi jika input password kosong
+    if (empty($password)) {
+        echo "<script>
+                alert('Password tidak boleh kosong!');
+              </script>";
+        return false;
+    }
+
+    // 2. Ambil password lama dari database berdasarkan id_user
+    $result = mysqli_query($koneksi, "SELECT password FROM users WHERE id_user = '$kode'");
+    $user   = mysqli_fetch_assoc($result);
+
+    if ($user) {
+        $password_db = $user['password'];
+
+        // 3. Cek apakah password baru sama dengan password lama
+        if (password_verify($password, $password_db)) {
+            echo "<script>
+                    alert('Gagal! Password baru tidak boleh sama dengan password lama.');
+                  </script>";
+            return false;
+        }
+    }
+
+    // 4. Hash password baru jika validasi lolos
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
     $query = "UPDATE users SET

@@ -1,6 +1,7 @@
 <?php
 require_once('function.php');
 include_once('templates/header.php');
+
 // pengecekan user role bukan admin maka tidak boleh mengakses halaman
 if ($_SESSION['role'] != 'admin') {
     echo "<script>alert('anda tidak memiliki akses');</script>";
@@ -46,8 +47,11 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
                   </div>';
         }
     } else if (isset($_POST['ganti_password'])) {
-        // Menggunakan >= 0 agar tetap dianggap sukses meski password baru sama dengan password lama
-        if (ganti_password($_POST) >= 0) {
+        // PERBAIKAN: Tangkap return value fungsi
+        $hasil = ganti_password($_POST);
+
+        // Pengecekan ketat (tidak akan true jika return false)
+        if ($hasil !== false && $hasil >= 0) {
             echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
                     Password berhasil diubah!
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -157,7 +161,6 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
                     </div>
                 </div>
 
-                <!-- TOMBOL KONFIRMASI (BATAL & SIMPAN) ADA DI SINI -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                     <button type="submit" name="simpan" class="btn btn-primary">Simpan</button>
@@ -184,9 +187,10 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
 
                     <input type="hidden" name="id_user" id="id_user">
                     <div class="form-group row">
-                        <label for="password" class="col-sm-4 col-form-label">Password Baru</label>
+                        <label for="password_baru" class="col-sm-4 col-form-label">Password Baru</label>
                         <div class="col-sm-7">
-                            <input type="password" class="form-control" id="password" name="password">
+                            <!-- PERBAIKAN: Ditambahkan required agar di-validate browser terlebih dahulu -->
+                            <input type="password" class="form-control" id="password_baru" name="password" required>
                         </div>
                     </div>
 

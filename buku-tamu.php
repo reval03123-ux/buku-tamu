@@ -49,7 +49,6 @@ if ($_SESSION['role'] != 'operator') {
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Gambar</th> <!-- Tambah kolom Gambar -->
                             <th>Tanggal</th>
                             <th>Nama Tamu</th>
                             <th>Alamat</th>
@@ -68,14 +67,6 @@ if ($_SESSION['role'] != 'operator') {
                         foreach ($buku_tamu as $tamu) : ?>
                             <tr>
                                 <td><?= $no++; ?></td>
-                                <!-- Tampilkan Gambar -->
-                                <td class="text-center">
-                                    <?php if (!empty($tamu['gambar']) && file_exists('assets/upload_gambar/' . $tamu['gambar'])) : ?>
-                                        <img src="assets/upload_gambar/<?= $tamu['gambar']; ?>" width="60" class="img-thumbnail">
-                                    <?php else : ?>
-                                        <span class="badge badge-secondary">Tidak ada</span>
-                                    <?php endif; ?>
-                                </td>
                                 <td><?= $tamu['tanggal']; ?></td>
                                 <td><?= $tamu['nama_tamu']; ?></td>
                                 <td><?= $tamu['alamat']; ?></td>
@@ -158,7 +149,7 @@ $kodeTamu = $huruf . sprintf("%03s", $urutan);
                     <div class="form-group row">
                         <label for="gambar" class="col-sm-3 col-form-label">Unggah Foto</label>
                         <div class="custom-file col-sm-8">
-                            <input type="file" class="custom-file-input" id="gambar" name="gambar" required>
+                            <input type="file" class="custom-file-input" id="gambar" name="gambar">
                             <label class="custom-file-label" for="gambar">Choose file</label>
                         </div>
                     </div>
@@ -172,7 +163,6 @@ $kodeTamu = $huruf . sprintf("%03s", $urutan);
     </div>
 </div>
 
-<!-- Script untuk mengubah teks 'Choose file' menjadi nama file yang dipilih -->
 <script>
     document.querySelector('.custom-file-input').addEventListener('change', function(e) {
         var fileName = document.getElementById("gambar").files[0].name;
