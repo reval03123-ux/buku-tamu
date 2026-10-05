@@ -208,6 +208,11 @@ function ganti_password($data)
               </script>";
         return false;
     }
+    else if (strlen($password) < 6) {
+        echo "<script>alert('Password baru minimal harus 6 karakter!'); window.history.back();</script>";
+        return false;
+    }
+    
 
     // 2. Ambil password lama dari database berdasarkan id_user
     $result = mysqli_query($koneksi, "SELECT password FROM users WHERE id_user = '$kode'");

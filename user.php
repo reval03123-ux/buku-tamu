@@ -40,7 +40,7 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
             echo "<script>window.location.href='user.php';</script>";
         } else {
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    Data gagal disimpan!
+                    Data gagal disimpan! (Pastikan password minimal 6 karakter)
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -65,7 +65,7 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
                   </script>";
         } else {
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    Gagal mengubah password!
+                    Gagal mengubah password! (Pastikan password minimal 6 karakter)
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -105,7 +105,8 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
                                 <td><?= htmlspecialchars($user['username']); ?></td>
                                 <td><?= htmlspecialchars($user['user_role']); ?></td>
                                 <td>
-                                    <button type="button" class="btn btn-info btn-icon-split" data-toggle="modal" data-target="#gantiPassword" data-id="<?= $user['id_user'] ?>">
+                                    <!-- Tombol Ganti Password dengan mengirimkan ID User -->
+                                    <button type="button" class="btn btn-info btn-icon-split btn-sm" data-toggle="modal" data-target="#gantiPassword" data-id="<?= $user['id_user'] ?>">
                                         <span class="text">Ganti Password</span>
                                     </button>
                                     <a class="btn btn-success btn-sm" href="edit-user.php?id=<?= $user['id_user']; ?>">Ubah</a>
@@ -136,7 +137,7 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
             <!-- FORM DIMULAI DI SINI -->
             <form method="post" action="">
                 <div class="modal-body">
-                    <input type="hidden" name="id_user" id="id_user" value="<?= $kodeuser; ?>" />
+                    <input type="hidden" name="id_user" id="id_user_tambah" value="<?= $kodeuser; ?>" />
 
                     <div class="form-group row">
                         <label for="username" class="col-sm-3 col-form-label">Username</label>
@@ -147,7 +148,9 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
                     <div class="form-group row">
                         <label for="password" class="col-sm-3 col-form-label">Password</label>
                         <div class="col-sm-9">
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <!-- Ditambahkan minlength="6" -->
+                            <input type="password" class="form-control" id="password" name="password" minlength="6" required>
+                            <small class="form-text text-muted">Minimal 6 karakter.</small>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -185,12 +188,15 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
             <form method="post" action="">
                 <div class="modal-body">
 
-                    <input type="hidden" name="id_user" id="id_user">
+                    <!-- Input ID User yang akan diubah passwordnya -->
+                    <input type="hidden" name="id_user" id="modal_id_user">
+
                     <div class="form-group row">
                         <label for="password_baru" class="col-sm-4 col-form-label">Password Baru</label>
                         <div class="col-sm-7">
-                            <!-- PERBAIKAN: Ditambahkan required agar di-validate browser terlebih dahulu -->
-                            <input type="password" class="form-control" id="password_baru" name="password" required>
+                            <!-- Ditambahkan minlength="6" untuk validasi browser minimal 6 karakter -->
+                            <input type="password" class="form-control" id="password_baru" name="password" minlength="6" required>
+                            <small class="form-text text-muted">Minimal 6 karakter.</small>
                         </div>
                     </div>
 
@@ -207,3 +213,14 @@ $kodeuser = $huruf . sprintf("%02s", $urutan);
 <?php
 include_once('templates/footer.php');
 ?>
+
+<!-- Script untuk menangkap ID user saat tombol Ganti Password diklik -->
+<script>
+    $('#gantiPassword').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget); // Tombol yang memicu modal
+        var idUser = button.data('id'); // Ambil info dari atribut data-*
+
+        var modal = $(this);
+        modal.find('.modal-body #modal_id_user').val(idUser);
+    });
+</script>

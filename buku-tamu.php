@@ -131,7 +131,7 @@ $kodeTamu = $huruf . sprintf("%03s", $urutan);
                     <div class="form-group row">
                         <label for="no_hp" class="col-sm-3 col-form-label">No. Telepon</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="no_hp" name="no_hp" required>
+                            <input type="number" class="form-control" id="no_hp" name="no_hp" required>
                         </div>
                     </div>
                     <div class="form-group row">

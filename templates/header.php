@@ -70,13 +70,7 @@ if (!isset($_SESSION['login'])) {
                 </li>
             <?php endif; ?>
 
-            <!-- Nav Item - Laporan -->
-            <li class="nav-item">
-                <a class="nav-link" href="laporan.php">
-                    <i class="fas fa-fw fa-file-alt"></i>
-                    <span>Laporan</span>
-                </a>
-            </li>
+
 
             <!-- Menu User - Hanya tampil untuk Admin -->
             <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') : ?>
@@ -87,6 +81,13 @@ if (!isset($_SESSION['login'])) {
                     </a>
                 </li>
             <?php endif; ?>
+            <!-- Nav Item - Laporan -->
+            <li class="nav-item">
+                <a class="nav-link" href="laporan.php">
+                    <i class="fas fa-fw fa-file-alt"></i>
+                    <span>Laporan</span>
+                </a>
+            </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -165,7 +166,7 @@ if (!isset($_SESSION['login'])) {
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <!-- Menampilkan nama user dinamis sesuai session -->
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?= htmlspecialchars($_SESSION['username']); ?></span>
-                                <img class="img-profile rounded-circle" src="assets/img/undraw_profile.svg">
+                                <img class="img-profile rounded-circle" src="assets/pp.jpeg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">

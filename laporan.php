@@ -88,7 +88,7 @@ if (isset($_POST['tampilkan'])) {
                             <th>No. Telp/HP</th>
                             <th>Bertemu Dengan</th>
                             <th>Kepentingan</th>
-                            <th>Aksi</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -106,8 +106,7 @@ if (isset($_POST['tampilkan'])) {
                                     <td><?= $tamu['bertemu']; ?></td>
                                     <td><?= $tamu['kepentingan']; ?></td>
                                     <td>
-                                        <a class="btn btn-success btn-sm" href="edit-tamu.php?id=<?= $tamu['id_tamu']; ?>">Ubah</a>
-                                        <a onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')" class="btn btn-danger btn-sm" href="hapus-tamu.php?id=<?= $tamu['id_tamu']; ?>">Hapus</a>
+                                        
                                     </td>
                                 </tr>
                             <?php
